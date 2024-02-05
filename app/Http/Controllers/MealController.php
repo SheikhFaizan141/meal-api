@@ -10,9 +10,21 @@ class MealController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $page = $request->query('page');
+        if (!is_null($page)) {
+            if (!is_numeric($page)) {
+                return response()->json($data = [], $status = '404');
+            }
+        }
+    
+        $pagination = Meal::latest()->paginate(12);
+        if ($pagination->isEmpty()) {
+            return response()->json($data = [], $status = '404');
+        }
+    
+        return response()->json($pagination);
     }
 
     /**
@@ -34,9 +46,9 @@ class MealController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Meal $meal)
+    public function show(Meal $id)
     {
-        //
+        return response()->json($id);
     }
 
     /**
