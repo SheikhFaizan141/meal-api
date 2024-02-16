@@ -22,16 +22,31 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('meal', [MealController::class, 'index'])->name('home');
 
-Route::get('meal/{id}', [MealController::class, 'show'])
+Route::get('meal/{meal}', [MealController::class, 'show'])
     ->missing(fn () => response()->json([], 404));
 
 
-Route::get('/search', function (Request $request) {
-    $meal = Meal::latest()->filter(request(['q']))->paginate(12);
-    return response()->json($meal);
-});
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+
+
+
+
+
+
+
+
+
+
+    
+
+// Route::get('/search', function (Request $request) {
+//     $meal = Meal::latest()->filter(request(['q']))->paginate(12);
+//     return response()->json($meal);
+// });
+
+
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

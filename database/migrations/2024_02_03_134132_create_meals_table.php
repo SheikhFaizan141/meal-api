@@ -28,8 +28,9 @@ return new class extends Migration
             $table->string('title');
             $table->string('url');
             $table->text('description');
-            $table->decimal('price', 8, 2);
-            $table->unsignedFloat('rating', 8, 2);
+            $table->boolean('is_veg');
+            $table->integer('price');
+            $table->unsignedDecimal('rating', 2, 1);
             $table->timestamps();
         });
     }

@@ -12,6 +12,7 @@ class MealController extends Controller
      */
     public function index(Request $request)
     {
+        // Not Valid Page
         $page = $request->query('page');
         if (!is_null($page)) {
             if (!is_numeric($page)) {
@@ -19,12 +20,16 @@ class MealController extends Controller
             }
         }
     
-        $pagination = Meal::latest()->paginate(12);
-        if ($pagination->isEmpty()) {
+        // Filter using search meals
+        $meal = Meal::latest()->filter(request(['q']))->paginate(8);
+        
+        if ($meal->isEmpty()) {
             return response()->json($data = [], $status = '404');
         }
-    
-        return response()->json($pagination);
+
+
+        return response()->json($meal);
+        // return $meal;
     }
 
     /**
@@ -46,9 +51,9 @@ class MealController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Meal $id)
+    public function show(Meal $meal)
     {
-        return response()->json($id);
+        return $meal;
     }
 
     /**

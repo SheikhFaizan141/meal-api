@@ -18,10 +18,11 @@ class MealFactory extends Factory
     {
         return [
             'name' => fake()->text(25),
-            'title' => fake()->title(),
+            'title' => fake()->text(),
             'url' => fake()->imageUrl(),
             'description' => fake()->paragraph(10),
-            'price' => fake()->randomFloat(2, 0, 10000),
+            'is_veg' => fake()->boolean(),
+            'price' => fake()->numberBetween(150, 4000),
             'rating' => fake()->randomFloat(2, 0, 5),
         ];
     }
