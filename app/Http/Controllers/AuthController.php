@@ -15,8 +15,8 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $attributes = $request->validate([
-            'name' => ['required'],
-            // 'email' => ['required', 'email', 'unique:users,email'],
+            'first_name' => ['required', 'min:2','max:255'],
+            'last_name' => ['required', 'min:2', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
             'password' => ['required', 'min:3']
         ]);
@@ -37,6 +37,8 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
+
+        // var_dump($credentials);
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 

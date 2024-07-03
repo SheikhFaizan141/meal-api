@@ -30,7 +30,7 @@ Route::get('meal/{meal}', [MealController::class, 'show'])
     ->missing(fn () => response()->json([], 404));
 
 // register
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
 
 // Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -38,10 +38,14 @@ Route::post('/login', [AuthController::class, 'login']);
 // Logout
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
-
+// Dashboard routes will go here
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 // Route::middleware('auth:sanctum')->get('/admin', function);
+
+Route::middleware('auth:sanctum')->get('admin', function(Request $request) {
+    response()->json(['message' => 'user is loged out']);
+});
