@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,5 +22,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        // Gate::define('update-post', function (User $user, Post $post) {
+        //     return $user->id === $post->user_id;
+        // });
+        // Check if user is admin 
+        Gate::define('admin', fn (User $user) => $user->first_name === 'test');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Meal;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MealController extends Controller
@@ -22,7 +23,7 @@ class MealController extends Controller
     
         // Filter using search meals
         $meal = Meal::latest()->filter(request(['q']))->paginate(8);
-        
+        // not good respose chage it to 200 and handle it on front end
         if ($meal->isEmpty()) {
             return response()->json($data = [], $status = '404');
         }
@@ -51,9 +52,9 @@ class MealController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Meal $meal)
+    public function show(Meal $meal): JsonResponse
     {
-        return $meal;
+        return response()->json($meal);
     }
 
     /**
