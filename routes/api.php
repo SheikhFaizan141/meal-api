@@ -46,7 +46,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Route::middleware('auth:sanctum')->get('/admin', function);
 
-Route::middleware(['auth:sanctum'])->get('admin', function(Request $request) {
+Route::middleware(['auth:sanctum', ])->get('admin', function(Request $request) {
     $user = auth()->user();
 
     if ($user->first_name !== 'test') {
