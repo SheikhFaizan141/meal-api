@@ -46,6 +46,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Route::middleware('auth:sanctum')->get('/admin', function);
 
-Route::middleware('auth:sanctum')->get('admin', function(Request $request) {
-    response()->json(['message' => 'user is loged out']);
+Route::middleware(['auth:sanctum'])->get('admin', function(Request $request) {
+    $user = auth()->user();
+
+    if ($user->first_name !== 'test') {
+        return response()->json(['not' => 'not authorized to make request'], 401);
+    }
+
+    return response()->json(['valid user' => 'redirect to admin panel']);
 });
