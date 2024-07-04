@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->get('/admin/meals', function (): JsonResponse
         return response()->json(['not' => 'not authorized to make request'], 403);
     }
 
-    
+
     $meal = Meal::latest()->paginate(10);
     if ($meal->isEmpty()) {
         return response()->json($data = []);
@@ -73,7 +73,18 @@ Route::middleware('auth:sanctum')->get('/admin/meals', function (): JsonResponse
 });
 
 
-/* TODO */
-Route::middleware('auth:sanctum')->post('/admin/add-meal', function (): JsonResponse {
-   
+Route::middleware('auth:sanctum')->post('/admin/meal', function (Request $request): JsonResponse {
+    if (!Gate::allows('admin')) {
+        return response()->json(["message" => "don't have proper permission to do this task"], 403);
+    }
+
+    // $attributes = $request->validate([
+    //     'title' => 'required',
+    //     'thumbnail' => $post->exists ? ['image'] : ['required', 'image'],
+    //     'slug' => ['required', Rule::unique('posts', 'slug')->ignore($post)],
+    //     'excerpt' => 'required',
+    //     'body' => 'required',
+    //     'category_id' => ['required', Rule::exists('categories', 'id')],
+    // ]);
+
 });

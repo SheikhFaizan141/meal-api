@@ -16,11 +16,13 @@ class MealFactory extends Factory
      */
     public function definition(): array
     {
+
         return [
-            'name' => fake()->text(25),
-            'title' => fake()->text(),
-            'url' => fake()->imageUrl(),
+            'name' => fake()->text(20),
+            'slug' => fake()->unique()->slug(),
+            'title' => fake()->text(255),
             'description' => fake()->paragraph(10),
+            'featured_img' => fake()->imageUrl(),
             'is_veg' => fake()->boolean(),
             'price' => fake()->numberBetween(150, 4000),
             'rating' => fake()->randomFloat(2, 0, 5),

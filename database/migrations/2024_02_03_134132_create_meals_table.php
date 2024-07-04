@@ -24,10 +24,10 @@ return new class extends Migration
         Schema::create('meals', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            // $table->string('slug')->unique();
+            $table->string('slug')->unique();
             $table->string('title');
-            $table->string('url');
             $table->text('description');
+            $table->string('img_url');
             $table->boolean('is_veg');
             $table->integer('price');
             $table->unsignedDecimal('rating', 2, 1);
