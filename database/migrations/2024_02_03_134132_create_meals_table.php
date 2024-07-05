@@ -27,10 +27,10 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('title');
             $table->text('description');
-            $table->string('img_url');
+            $table->string('featured_img');
             $table->boolean('is_veg');
             $table->integer('price');
-            $table->unsignedDecimal('rating', 2, 1);
+            $table->unsignedDecimal('rating', 2, 1)->nullable()->default(0);
             $table->timestamps();
         });
     }

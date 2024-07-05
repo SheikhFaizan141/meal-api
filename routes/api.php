@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,16 +51,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->get('/admin', function (Request $request): JsonResponse {
     if (Gate::denies('admin')) {
-        return response()->json(['not' => 'not authorized to make request'], 403);
+        return response()->json(['message' => 'not authorized to make request'], 403);
     }
 
-    return response()->json(['valid user' => 'redirect to admin panel']);
+    return response()->json(['message' => 'redirect to admin panel']);
 });
 
 
 Route::middleware('auth:sanctum')->get('/admin/meals', function (): JsonResponse {
     if (Gate::denies('admin')) {
-        return response()->json(['not' => 'not authorized to make request'], 403);
+        return response()->json(['message' => 'not authorized to make request'], 403);
     }
 
 
@@ -78,13 +79,24 @@ Route::middleware('auth:sanctum')->post('/admin/meal', function (Request $reques
         return response()->json(["message" => "don't have proper permission to do this task"], 403);
     }
 
-    // $attributes = $request->validate([
-    //     'title' => 'required',
-    //     'thumbnail' => $post->exists ? ['image'] : ['required', 'image'],
-    //     'slug' => ['required', Rule::unique('posts', 'slug')->ignore($post)],
-    //     'excerpt' => 'required',
-    //     'body' => 'required',
-    //     'category_id' => ['required', Rule::exists('categories', 'id')],
-    // ]);
+    // make slug 
+    $request['slug'] = Str::slug($request->slug);
 
+    $attributes = $request->validate([
+        'name' => 'required',
+        'slug' => ['required', Rule::unique('meals', 'slug')],
+        'featured_img' =>  ['required', 'image', 'mimes:png,jpg', 'max:4000'],
+        'title' => ['required', 'max:255', ''],
+        'description' => 'required',
+        'is_veg' => ['required', 'boolean'],
+        'price' => 'required'
+    ]);
+
+    // add meal to file
+    $attributes['featured_img'] = request()->file('featured_img')->store('featured-images');
+
+    
+    $meal = Meal::create($attributes);
+
+    return response()->json($meal);
 });
