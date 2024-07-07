@@ -100,3 +100,31 @@ Route::middleware('auth:sanctum')->post('/admin/meal', function (Request $reques
 
     return response()->json($meal);
 });
+
+
+Route::middleware('auth:sanctum')->patch('/admin/meal/{$slug}', function(Request $request, Meal $slug): JsonResponse {
+    if (!Gate::allows('admin')) {
+        return response()->json(["message" => "don't have proper permission to do this task"], 403);
+    }
+
+    // make slug 
+    $request['slug'] = Str::slug($request->slug);
+
+    $attributes = $request->validate([
+        'name' => 'required',
+        'slug' => ['required', Rule::unique('meals', 'slug')],
+        'featured_img' =>  ['required', 'image', 'mimes:png,jpg', 'max:4000'],
+        'title' => ['required', 'max:255', ''],
+        'description' => 'required',
+        'is_veg' => ['required', 'boolean'],
+        'price' => 'required'
+    ]);
+
+    // add meal to file
+    $attributes['featured_img'] = request()->file('featured_img')->store('featured-images');
+
+    
+    $meal = Meal::create($attributes);
+
+    return response()->json($meal);
+});
