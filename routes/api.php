@@ -74,7 +74,7 @@ Route::middleware('auth:sanctum')->get('/admin/meals', function (): JsonResponse
 });
 
 
-Route::middleware('auth:sanctum')->post('/admin/meal', function (Request $request): JsonResponse {
+Route::middleware('auth:sanctum')->post('/admin/meals', function (Request $request): JsonResponse {
     if (!Gate::allows('admin')) {
         return response()->json(["message" => "don't have proper permission to do this task"], 403);
     }
@@ -86,7 +86,7 @@ Route::middleware('auth:sanctum')->post('/admin/meal', function (Request $reques
         'name' => 'required',
         'slug' => ['required', Rule::unique('meals', 'slug')],
         'featured_img' =>  ['required', 'image', 'mimes:png,jpg', 'max:4000'],
-        'title' => ['required', 'max:255', ''],
+        'title' => ['required', 'max:255'],
         'description' => 'required',
         'is_veg' => ['required', 'boolean'],
         'price' => 'required'
@@ -95,14 +95,14 @@ Route::middleware('auth:sanctum')->post('/admin/meal', function (Request $reques
     // add meal to file
     $attributes['featured_img'] = request()->file('featured_img')->store('featured-images');
 
-    
+
     $meal = Meal::create($attributes);
 
     return response()->json($meal);
 });
 
 
-Route::middleware('auth:sanctum')->patch('/admin/meal/{$slug}', function(Request $request, Meal $slug): JsonResponse {
+Route::middleware('auth:sanctum')->patch('/admin/meals/{meal:slug}', function (Request $request, Meal $meal): JsonResponse {
     if (!Gate::allows('admin')) {
         return response()->json(["message" => "don't have proper permission to do this task"], 403);
     }
@@ -112,19 +112,32 @@ Route::middleware('auth:sanctum')->patch('/admin/meal/{$slug}', function(Request
 
     $attributes = $request->validate([
         'name' => 'required',
-        'slug' => ['required', Rule::unique('meals', 'slug')],
-        'featured_img' =>  ['required', 'image', 'mimes:png,jpg', 'max:4000'],
-        'title' => ['required', 'max:255', ''],
-        'description' => 'required',
+        'slug' => ['required', Rule::unique('meals', 'slug')->ignoreModel($meal)],
+        'featured_img' =>  $meal->exists ? ['image', 'mimes:png,jpg', 'max:5600'] : ['required', 'image', 'mimes:png,jpg', 'max:5600'],
+        'title' => ['required', 'max:255'],
+        'description' => ['required'],
         'is_veg' => ['required', 'boolean'],
-        'price' => 'required'
+        'price' => ['required']
     ]);
 
-    // add meal to file
-    $attributes['featured_img'] = request()->file('featured_img')->store('featured-images');
 
-    
-    $meal = Meal::create($attributes);
+    if ($attributes['featured_img'] ?? false) {
+        $attributes['featured_img'] = request()->file('featured_img')->store('featured_imgs');
+    }
 
-    return response()->json($meal);
+    $meal->update($attributes);
+
+    return response()->json(['success', 'Post Updated!']);
+});
+
+
+Route::middleware('auth:sanctum')->delete('/admin/meals/{meal:slug}', function (Meal $meal): JsonResponse {
+
+    if (!Gate::allows('admin')) {
+        return response()->json(["message" => "don't have proper permission to do this task"], 403);
+    }
+
+    $meal->delete();
+
+    return response()->json(['message', 'post deleted!']);
 });
