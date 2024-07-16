@@ -30,7 +30,8 @@ return new class extends Migration
             $table->string('featured_img');
             $table->boolean('is_veg');
             $table->integer('price');
-            $table->unsignedDecimal('rating', 2, 1)->nullable()->default(0);
+            // $table->unsignedDecimal('rating', 2, 1)->nullable()->default(0);
+            $table->decimal('rating', 2, 1)->default(0);
             $table->timestamps();
         });
     }

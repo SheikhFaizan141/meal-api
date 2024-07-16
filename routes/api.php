@@ -113,7 +113,7 @@ Route::middleware('auth:sanctum')->patch('/admin/meals/{meal:slug}', function (R
     $attributes = $request->validate([
         'name' => 'required',
         'slug' => ['required', Rule::unique('meals', 'slug')->ignoreModel($meal)],
-        'featured_img' =>  $meal->exists ? ['image', 'mimes:png,jpg', 'max:5600'] : ['required', 'image', 'mimes:png,jpg', 'max:5600'],
+        'featured_img' => ['image', 'mimes:png,jpg', 'max:5600'],
         'title' => ['required', 'max:255'],
         'description' => ['required'],
         'is_veg' => ['required', 'boolean'],
