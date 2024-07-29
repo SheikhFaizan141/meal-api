@@ -93,10 +93,10 @@ Route::middleware('auth:sanctum')->post('/admin/meals', function (Request $reque
     ]);
 
     // add meal to file
-    $attributes['featured_img'] = request()->file('featured_img')->store('featured-images');
+    $attributes['featured_img'] = $request->file('featured_img')->store('featured-images');
 
 
-    $meal = Meal::create($attributes);
+    $meal = Meal::create($attributes); 
 
     return response()->json($meal);
 });
@@ -122,7 +122,7 @@ Route::middleware('auth:sanctum')->patch('/admin/meals/{meal:slug}', function (R
 
 
     if ($attributes['featured_img'] ?? false) {
-        $attributes['featured_img'] = request()->file('featured_img')->store('featured_imgs');
+        $attributes['featured_img'] = $request->file('featured_img')->store('featured_imgs');
     }
 
     $meal->update($attributes);
@@ -131,7 +131,7 @@ Route::middleware('auth:sanctum')->patch('/admin/meals/{meal:slug}', function (R
 });
 
 
-Route::middleware('auth:sanctum')->delete('/admin/meals/{meal:slug}', function (Meal $meal): JsonResponse {
+Route::middleware('auth:sanctum')->delete('/admin/meals/{meal}', function (Meal $meal): JsonResponse {
 
     if (!Gate::allows('admin')) {
         return response()->json(["message" => "don't have proper permission to do this task"], 403);
@@ -140,4 +140,14 @@ Route::middleware('auth:sanctum')->delete('/admin/meals/{meal:slug}', function (
     $meal->delete();
 
     return response()->json(['message', 'post deleted!']);
+});
+
+
+Route::get('/test', function() {
+    $user = User::latest()->first();
+
+    // $user->append('is_admin')->toArray();
+    // dd($user);
+
+    return response()->json($user);
 });

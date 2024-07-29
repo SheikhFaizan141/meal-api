@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
@@ -15,17 +16,17 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $attributes = $request->validate([
-            'first_name' => ['required', 'min:2','max:255'],
+            'first_name' => ['required', 'min:2', 'max:255'],
             'last_name' => ['required', 'min:2', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
             'password' => ['required', 'min:3']
         ]);
-    
-    
+
+
         $user = User::create($attributes);
-    
+
         Auth::login($user);
-    
+
         return response()->json(['message' => 'user created']);
     }
 
@@ -42,11 +43,12 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+            $user = Auth::user();
 
-            return response()->json(['message' => "welcome back"]);
+            return response()->json($user);
         }
 
-        return response()->json(['email' => 'The provided credentials do not match our records.'], 401);
+        return response()->json(["message" => "The provided credentials do not match our records."], 401);
     }
 
     public function logout(Request $request): JsonResponse
