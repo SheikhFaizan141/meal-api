@@ -102,7 +102,7 @@ Route::middleware('auth:sanctum')->post('/admin/meals', function (Request $reque
 });
 
 
-Route::middleware('auth:sanctum')->patch('/admin/meals/{meal:slug}', function (Request $request, Meal $meal): JsonResponse {
+Route::middleware('auth:sanctum')->patch('/admin/meals/{meal}', function (Request $request, Meal $meal): JsonResponse {
     if (!Gate::allows('admin')) {
         return response()->json(["message" => "don't have proper permission to do this task"], 403);
     }
