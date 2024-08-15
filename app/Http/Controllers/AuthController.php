@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         $user = User::create($attributes);
 
-        Auth::login($user);
+        Auth::login($user, true);
 
         return response()->json(['message' => 'user created']);
     }
@@ -38,8 +38,6 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-
-        // var_dump($credentials);
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 

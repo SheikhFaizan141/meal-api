@@ -2,17 +2,20 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MealController;
+use App\Http\Controllers\SocialAuthController;
 use App\Models\Meal;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +33,7 @@ use Illuminate\Support\Str;
 Route::get('meal', [MealController::class, 'index'])->name('home');
 
 Route::get('meal/{meal}', [MealController::class, 'show'])
-    ->missing(fn () => response()->json([], 404));
+    ->missing(fn() => response()->json([], 404));
 
 // register
 Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
@@ -41,10 +44,19 @@ Route::post('/login', [AuthController::class, 'login']);
 // Logout
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
+
+
+Route::middleware(['web'])->group(function () {
+    Route::get('/auth/redirect', [SocialAuthController::class, 'authRedirect']);
+    Route::get('/auth/callback', [SocialAuthController::class, 'authCallback']);
+});
+
+
 // Dashboard routes will go here
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->post('/user', function (Request $request) {
+    $user = auth()->user();
+    return response()->json(['data' => $user]);
 });
 
 // Route::middleware('auth:sanctum')->get('/admin', function);
@@ -96,7 +108,7 @@ Route::middleware('auth:sanctum')->post('/admin/meals', function (Request $reque
     $attributes['featured_img'] = $request->file('featured_img')->store('featured-images');
 
 
-    $meal = Meal::create($attributes); 
+    $meal = Meal::create($attributes);
 
     return response()->json($meal);
 });
@@ -143,7 +155,7 @@ Route::middleware('auth:sanctum')->delete('/admin/meals/{meal}', function (Meal 
 });
 
 
-Route::get('/test', function() {
+Route::get('/test', function () {
     $user = User::latest()->first();
 
     // $user->append('is_admin')->toArray();
